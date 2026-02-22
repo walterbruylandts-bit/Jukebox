@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Mijn Vinyl Collectie</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+</head>
+<body>
+    <div id="status-bar">Wacht op start...</div>
+    <div class="controls">
+        <input type="text" id="search-input" placeholder="Zoek artiest of album...">
+        <button id="pause-btn">Pauzeer laden</button>
+        <button id="fav-filter-btn">Toon Favorieten ☆</button>
+    </div>
+    <div id="vinyl-container"></div>
+
+    <div id="album-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="modal-details"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
