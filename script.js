@@ -98,20 +98,25 @@ async function startFotoWachtrij() {
 async function haalDiscogsFoto(id) {
     if (discogsCache[id]) return;
     try {
-        const response = await fetch(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`);
-        if (response.status === 429) { isPaused = true; return; }
-        if (response.ok) {
-            const data = await response.json();
-            discogsCache[id] = data;
-            const img = document.getElementById(`img-${id}`);
-            if (img) { 
-                img.src = data.images ? data.images[0].resource_url : ''; 
-                img.style.display = "block"; 
-                document.getElementById(`placeholder-${id}`).style.display = "none"; 
-            }
-        }
-    } catch (e) {}
-}
+// Navidrome Check met extra beveiligings-instellingen
+        try {
+            const searchUrl = `${navidromeServer}/rest/search3.view?u=${user}&p=${pass}&v=1.12.0&c=website&query=${encodeURIComponent(schoneTitel)}&artistCount=1&titleCount=20&f=json`;
+            
+            const response = await fetch(searchUrl, {
+                method: 'GET',
+                mode: 'cors', // Dit vertelt de browser dat we tussen verschillende websites praten
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            const sData = await response.json();
+            const songs = sData["subsonic-response"]?.searchResult3?.song;
+            
+            // We zoeken nu iets losser: kijken of de titel voorkomt in het resultaat
+            const gevonden = songs?.find(s => 
+                s.title.toLowerCase().replace(/\s/g, '').includes(schoneTitel.toLowerCase().replace(/\s/g, ''))
+            );
 
 function schoonmaken(tekst) {
     if (!tekst) return "";
