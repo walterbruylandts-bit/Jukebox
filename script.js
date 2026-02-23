@@ -154,9 +154,14 @@ async function openMuziekPopup(elpee) {
 
     let data = discogsCache[id];
     if (!data) {
-        const res = await fetch(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`);
-        data = await res.json();
-        discogsCache[id] = data;
+        try {
+            const res = await fetch(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`);
+            data = await res.json();
+            discogsCache[id] = data;
+        } catch (e) {
+            details.innerHTML = `<h2 style="color:white; padding:40px;">Fout bij laden Discogs data...</h2>`;
+            return;
+        }
     }
 
     const credits = (data.extraartists || []).slice(0, 15).map(a => `<b>${a.name}</b> (${a.role})`).join(", ");
@@ -169,7 +174,6 @@ async function openMuziekPopup(elpee) {
         const schoneTitel = schoonmaken(track.title);
         const schoneArtiest = schoonmaken(elpee.Artist);
         
-        // Pad voor actielijst
         const pos = (track.position || "").toUpperCase();
         let subMap = pos.startsWith("B") ? "SideB" : (pos.startsWith("C") ? "SideC" : (pos.startsWith("D") ? "SideD" : "SideA"));
         const volledigPad = `1mp3 Archief/${schoneArtiest}/${schoonmaken(elpee.Title)}/${subMap}/${schoneTitel}.mp3`;
@@ -177,18 +181,14 @@ async function openMuziekPopup(elpee) {
         let mp3Url = "";
         let bestaat = false;
 
-        // Navidrome Check
         try {
             const searchUrl = `${navidromeServer}/rest/search3.view?u=${user}&p=${pass}&v=1.12.0&c=website&query=${encodeURIComponent(schoneTitel)}&artistCount=1&titleCount=20&f=json`;
-            
-            // WIJZIGING 1: Zoeken via Proxy
             const response = await fetch("https://corsproxy.io/?" + encodeURIComponent(searchUrl));
             const sData = await response.json();
             const songs = sData["subsonic-response"]?.searchResult3?.song;
             const gevonden = songs?.find(s => s.title.toLowerCase().includes(schoneTitel.toLowerCase()) && s.artist.toLowerCase().includes(schoneArtiest.toLowerCase()));
 
             if (gevonden) {
-                // WIJZIGING 2: Streamen via Proxy
                 const pureStreamUrl = `${navidromeServer}/rest/stream?u=${user}&p=${pass}&v=1.12.0&c=website&id=${gevonden.id}`;
                 mp3Url = "https://corsproxy.io/?" + encodeURIComponent(pureStreamUrl);
                 bestaat = true;
@@ -223,8 +223,10 @@ async function openMuziekPopup(elpee) {
         ${tracklistHtml}`;
 }
 
-// Sluit popup
-document.querySelector('.close-button').onclick = () => { document.getElementById('album-modal').style.display = "none"; };
+// Sluit popup-functie
+document.querySelector('.close-button').onclick = () => { 
+    document.getElementById('album-modal').style.display = "none"; 
+};
 
-// START HET SYSTEEM
+// Start het systeem
 laadMijnCollectie();
