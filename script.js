@@ -98,25 +98,17 @@ async function startFotoWachtrij() {
 async function haalDiscogsFoto(id) {
     if (discogsCache[id]) return;
     try {
-// Navidrome Check met extra beveiligings-instellingen
-        try {
-            const searchUrl = `${navidromeServer}/rest/search3.view?u=${user}&p=${pass}&v=1.12.0&c=website&query=${encodeURIComponent(schoneTitel)}&artistCount=1&titleCount=20&f=json`;
-            
-            const response = await fetch(searchUrl, {
-                method: 'GET',
-                mode: 'cors', // Dit vertelt de browser dat we tussen verschillende websites praten
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-            
-            const sData = await response.json();
-            const songs = sData["subsonic-response"]?.searchResult3?.song;
-            
-            // We zoeken nu iets losser: kijken of de titel voorkomt in het resultaat
-            const gevonden = songs?.find(s => 
-                s.title.toLowerCase().replace(/\s/g, '').includes(schoneTitel.toLowerCase().replace(/\s/g, ''))
-            );
+        const res = await fetch(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`);
+        const data = await res.json();
+        if (data.images && data.images.length > 0) {
+            discogsCache[id] = data;
+            const img = document.getElementById(`img-${id}`);
+            const ph = document.getElementById(`placeholder-${id}`);
+            if (img) { img.src = data.images[0].resource_url; img.style.display = "block"; }
+            if (ph) ph.style.display = "none";
+        }
+    } catch (e) { console.error("Discogs error", e); }
+}
 
 function schoonmaken(tekst) {
     if (!tekst) return "";
@@ -183,14 +175,20 @@ async function openMuziekPopup(elpee) {
 
         try {
             const searchUrl = `${navidromeServer}/rest/search3.view?u=${user}&p=${pass}&v=1.12.0&c=website&query=${encodeURIComponent(schoneTitel)}&artistCount=1&titleCount=20&f=json`;
+            
+            // Gebruik van de CORS Proxy voor Navidrome
             const response = await fetch("https://corsproxy.io/?" + encodeURIComponent(searchUrl));
             const sData = await response.json();
             const songs = sData["subsonic-response"]?.searchResult3?.song;
-            const gevonden = songs?.find(s => s.title.toLowerCase().includes(schoneTitel.toLowerCase()) && s.artist.toLowerCase().includes(schoneArtiest.toLowerCase()));
+            
+            const gevonden = songs?.find(s => 
+                s.title.toLowerCase().includes(schoneTitel.toLowerCase()) && 
+                s.artist.toLowerCase().includes(schoneArtiest.toLowerCase())
+            );
 
             if (gevonden) {
-                const pureStreamUrl = `${navidromeServer}/rest/stream?u=${user}&p=${pass}&v=1.12.0&c=website&id=${gevonden.id}`;
-                mp3Url = "https://corsproxy.io/?" + encodeURIComponent(pureStreamUrl);
+                const streamUrl = `${navidromeServer}/rest/stream?u=${user}&p=${pass}&v=1.12.0&c=website&id=${gevonden.id}`;
+                mp3Url = "https://corsproxy.io/?" + encodeURIComponent(streamUrl);
                 bestaat = true;
             } else {
                 missendePaden.push(volledigPad);
