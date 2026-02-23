@@ -180,18 +180,24 @@ async function openMuziekPopup(elpee) {
         // Navidrome Check
         try {
             const searchUrl = `${navidromeServer}/rest/search3.view?u=${user}&p=${pass}&v=1.12.0&c=website&query=${encodeURIComponent(schoneTitel)}&artistCount=1&titleCount=20&f=json`;
-            const response = await fetch(searchUrl);
+            
+            // WIJZIGING 1: Zoeken via Proxy
+            const response = await fetch("https://corsproxy.io/?" + encodeURIComponent(searchUrl));
             const sData = await response.json();
             const songs = sData["subsonic-response"]?.searchResult3?.song;
             const gevonden = songs?.find(s => s.title.toLowerCase().includes(schoneTitel.toLowerCase()) && s.artist.toLowerCase().includes(schoneArtiest.toLowerCase()));
 
             if (gevonden) {
-                mp3Url = `${navidromeServer}/rest/stream?u=${user}&p=${pass}&v=1.12.0&c=website&id=${gevonden.id}`;
+                // WIJZIGING 2: Streamen via Proxy
+                const pureStreamUrl = `${navidromeServer}/rest/stream?u=${user}&p=${pass}&v=1.12.0&c=website&id=${gevonden.id}`;
+                mp3Url = "https://corsproxy.io/?" + encodeURIComponent(pureStreamUrl);
                 bestaat = true;
             } else {
                 missendePaden.push(volledigPad);
             }
-        } catch (e) { console.error("Navidrome error", e); }
+        } catch (e) { 
+            console.error("Navidrome error", e); 
+        }
 
         tracklistHtml += `
             <div style="margin-bottom:15px; border-bottom:1px solid #333; padding:10px; text-align:left;">
