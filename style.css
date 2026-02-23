@@ -1,4 +1,20 @@
-body { background: #121212; color: white; font-family: sans-serif; margin: 0; padding: 20px; }
+body {
+    /* Een warme bruine basiskleur */
+    background-color: #4a2f1b; 
+    
+    /* Een subtiel hout-patroon via een lichte textuur */
+    background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+    
+    /* Zorg dat het patroon zich herhaalt over het hele scherm */
+    background-repeat: repeat;
+    
+    /* Dit zorgt ervoor dat de achtergrond mooi op zijn plek blijft staan als je scrollt */
+    background-attachment: fixed;
+    
+    /* Optioneel: een lichte schaduw over de hoeken voor meer diepte */
+    background-image: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%), 
+                      url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+}
 #status-bar { position: fixed; top: 0; left: 0; width: 100%; background: #ecc94b; color: black; padding: 5px 20px; font-weight: bold; z-index: 1000; font-size: 0.8rem; }
 .controls { margin-top: 30px; margin-bottom: 20px; display: flex; gap: 10px; }
 input { padding: 10px; flex-grow: 1; border-radius: 5px; border: none; background: #222; color: white; }
