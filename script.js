@@ -88,8 +88,7 @@ async function startFotoWachtrij() {
 async function haalDiscogsFoto(id) {
     if (discogsCache[id]) return;
     try {
-        const res = await fetch(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`);
-        const data = await res.json();
+    const res = await fetch("https://corsproxy.io/?" + encodeURIComponent(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`));        const data = await res.json();
         if (data.images && data.images.length > 0) {
             discogsCache[id] = data;
             const img = document.getElementById(`img-${id}`);
