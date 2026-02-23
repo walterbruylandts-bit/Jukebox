@@ -8,16 +8,6 @@ const DISCOGS_TOKEN = "bRVfNphNvpIQFGMHjnOmbnvthDTzUbUddawubXLi";
 const CSV_BESTAND = "collectie.csv"; 
 
 // ==========================================
-// VARIABELEN & STATUS
-// ==========================================
-let alleElpees = [];
-let discogsCache = {};
-let isPaused = false;
-let laadIndex = 0;
-let favorieten = JSON.parse(localStorage.getItem('vinyl_favs')) || [];
-let filterFavs = false;
-
-// ==========================================
 // 1. COLLECTIE LADEN & PAGINA OPBOUW
 // ==========================================
 function laadMijnCollectie() {
