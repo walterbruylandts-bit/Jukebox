@@ -1,7 +1,7 @@
 // ==========================================
 // CONFIGURATIE - VUL HIER JE GEGEVENS IN
 // ==========================================
-const navidromeServer = "http://141.144.192.216:443";
+const navidromeServer = "http://141.144.192.216:4533";
 const user = "admin"; // Je Navidrome loginnaam
 const pass = "5db21d96009805908b982998f8047970";         // Je Navidrome Token (zie uitleg onderaan)
 const salt = "jukebox2026";          // De Salt die bij je Token hoort
