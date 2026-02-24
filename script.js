@@ -1,7 +1,7 @@
-if (typeof discogsCache === 'undefined') { var discogsCache = {}; }
-const discogsCache = {};
+// Voorkom fouten als de cache ontbreekt
+var discogsCache = discogsCache || {};
 
-/ ==========================================
+// ==========================================
 // CONFIGURATIE - VUL HIER JE GEGEVENS IN
 // ==========================================
 const navidromeServer = "http://141.144.192.216:4533";
