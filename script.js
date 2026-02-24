@@ -1,13 +1,7 @@
-var discogsCache = typeof discogsCache !== 'undefined' ? discogsCache : {};
+var discogsCache = {};
 
-// ==========================================
-// CONFIGURATIE - VUL HIER JE GEGEVENS IN
-// ==========================================
-const navidromeServer = "http://141.144.192.216:4533";
-const user = "walterbruylandts";
-const pass = "WeeBee_2023";
-const DISCOGS_TOKEN = "bRVfNphNvpIQFGMHjnOmbnvthDTzUbUddawubXLi"; 
-const CSV_BESTAND = "collectie.csv"; 
+// CONFIGURATIE
+const serverUrl = "https://141.144.192.216";
 
 // ==========================================
 // 1. COLLECTIE LADEN & PAGINA OPBOUW
