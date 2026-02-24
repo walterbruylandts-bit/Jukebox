@@ -1,7 +1,21 @@
-var discogsCache = {};
+// ==========================================
+// CONFIGURATIE - VUL HIER JE GEGEVENS IN
+// ==========================================
+const navidromeServer = "http://141.144.192.216:4533";
+const user = "walterbruylandts";
+const pass = "Jukebox_2023";
+const DISCOGS_TOKEN = "BMwPAgEDqQEyruCDxrfOKPNpAtkaaIDPMxrqtNYc";
+const CSV_BESTAND = "collectie.csv"; // De naam van je CSV-bestand
 
-// CONFIGURATIE
-const serverUrl = "https://141.144.192.216";
+// ==========================================
+// VARIABELEN & STATUS
+// ==========================================
+let alleElpees = [];
+let discogsCache = {};
+let isPaused = false;
+let laadIndex = 0;
+let favorieten = JSON.parse(localStorage.getItem('vinyl_favs')) || [];
+let filterFavs = false;
 
 // ==========================================
 // 1. COLLECTIE LADEN & PAGINA OPBOUW
@@ -55,13 +69,14 @@ function maakDePaginaAan(elpees) {
         const kaartje = document.createElement('div');
         kaartje.className = 'album-card';
         kaartje.innerHTML = `
-<div class="image-container" style="background:#222; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; border-radius:8px; overflow:hidden;">
-    <span id="placeholder-${id}" style="display:block; font-size:40px;">💿</span>
-</div>
-<div class="album-info">
-    <h2 style="font-size:1rem; margin:10px 0 5px 0; color:white;">${elpee.Artist || 'Onbekende artiest'}</h2>
-    <p style="color:#888; margin:0; font-size:0.9rem;">${elpee.Title || 'Onbekend album'}</p>
-</div>`;
+            <div class="image-container" style="background:#222; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; border-radius:8px; overflow:hidden;">
+                <img src="${discogsCache[id] ? discogsCache[id].images[0].resource_url : ''}" class="album-cover" id="img-${id}" style="${discogsCache[id] ? 'display:block' : 'display:none'}; width:100%;">
+                <span id="placeholder-${id}" style="${discogsCache[id] ? 'display:none' : 'display:block'}; font-size:40px;">💿</span>
+            </div>
+            <div class="album-info">
+                <h2 style="font-size:1rem; margin:10px 0 5px 0; color:white;">${elpee.Artist}</h2>
+                <p style="color:#888; margin:0; font-size:0.9rem;">${elpee.Title}</p>
+            </div>`;
         kaartje.onclick = () => openMuziekPopup(elpee);
         container.appendChild(kaartje);
     });
@@ -83,15 +98,19 @@ async function startFotoWachtrij() {
 async function haalDiscogsFoto(id) {
     if (discogsCache[id]) return;
     try {
-    const res = await fetch("https://corsproxy.io/?" + encodeURIComponent(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`));        const data = await res.json();
-        if (data.images && data.images.length > 0) {
+        const response = await fetch(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`);
+        if (response.status === 429) { isPaused = true; return; }
+        if (response.ok) {
+            const data = await response.json();
             discogsCache[id] = data;
             const img = document.getElementById(`img-${id}`);
-            const ph = document.getElementById(`placeholder-${id}`);
-            if (img) { img.src = data.images[0].resource_url; img.style.display = "block"; }
-            if (ph) ph.style.display = "none";
+            if (img) { 
+                img.src = data.images ? data.images[0].resource_url : ''; 
+                img.style.display = "block"; 
+                document.getElementById(`placeholder-${id}`).style.display = "none"; 
+            }
         }
-    } catch (e) { console.error("Discogs error", e); }
+    } catch (e) {}
 }
 
 function schoonmaken(tekst) {
@@ -130,14 +149,9 @@ async function openMuziekPopup(elpee) {
 
     let data = discogsCache[id];
     if (!data) {
-        try {
-            const res = await fetch(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`);
-            data = await res.json();
-            discogsCache[id] = data;
-        } catch (e) {
-            details.innerHTML = `<h2 style="color:white; padding:40px;">Fout bij laden Discogs data...</h2>`;
-            return;
-        }
+        const res = await fetch(`https://api.discogs.com/releases/${id}?token=${DISCOGS_TOKEN}`);
+        data = await res.json();
+        discogsCache[id] = data;
     }
 
     const credits = (data.extraartists || []).slice(0, 15).map(a => `<b>${a.name}</b> (${a.role})`).join(", ");
@@ -150,6 +164,7 @@ async function openMuziekPopup(elpee) {
         const schoneTitel = schoonmaken(track.title);
         const schoneArtiest = schoonmaken(elpee.Artist);
         
+        // Pad voor actielijst
         const pos = (track.position || "").toUpperCase();
         let subMap = pos.startsWith("B") ? "SideB" : (pos.startsWith("C") ? "SideC" : (pos.startsWith("D") ? "SideD" : "SideA"));
         const volledigPad = `1mp3 Archief/${schoneArtiest}/${schoonmaken(elpee.Title)}/${subMap}/${schoneTitel}.mp3`;
@@ -157,29 +172,21 @@ async function openMuziekPopup(elpee) {
         let mp3Url = "";
         let bestaat = false;
 
+        // Navidrome Check
         try {
             const searchUrl = `${navidromeServer}/rest/search3.view?u=${user}&p=${pass}&v=1.12.0&c=website&query=${encodeURIComponent(schoneTitel)}&artistCount=1&titleCount=20&f=json`;
-            
-            // Gebruik van de CORS Proxy voor Navidrome
-            const response = await fetch("https://corsproxy.io/?" + encodeURIComponent(searchUrl));
+            const response = await fetch(searchUrl);
             const sData = await response.json();
             const songs = sData["subsonic-response"]?.searchResult3?.song;
-            
-            const gevonden = songs?.find(s => 
-                s.title.toLowerCase().includes(schoneTitel.toLowerCase()) && 
-                s.artist.toLowerCase().includes(schoneArtiest.toLowerCase())
-            );
+            const gevonden = songs?.find(s => s.title.toLowerCase().includes(schoneTitel.toLowerCase()) && s.artist.toLowerCase().includes(schoneArtiest.toLowerCase()));
 
             if (gevonden) {
-                const streamUrl = `${navidromeServer}/rest/stream?u=${user}&p=${pass}&v=1.12.0&c=website&id=${gevonden.id}`;
-                mp3Url = "https://corsproxy.io/?" + encodeURIComponent(streamUrl);
+                mp3Url = `${navidromeServer}/rest/stream?u=${user}&p=${pass}&v=1.12.0&c=website&id=${gevonden.id}`;
                 bestaat = true;
             } else {
                 missendePaden.push(volledigPad);
             }
-        } catch (e) { 
-            console.error("Navidrome error", e); 
-        }
+        } catch (e) { console.error("Navidrome error", e); }
 
         tracklistHtml += `
             <div style="margin-bottom:15px; border-bottom:1px solid #333; padding:10px; text-align:left;">
@@ -205,10 +212,8 @@ async function openMuziekPopup(elpee) {
         ${tracklistHtml}`;
 }
 
-// Sluit popup-functie
-document.querySelector('.close-button').onclick = () => { 
-    document.getElementById('album-modal').style.display = "none"; 
-};
+// Sluit popup
+document.querySelector('.close-button').onclick = () => { document.getElementById('album-modal').style.display = "none"; };
 
-// Start het systeem
+// START HET SYSTEEM
 laadMijnCollectie();
