@@ -1,5 +1,4 @@
-// Voorkom fouten als de cache ontbreekt
-var discogsCache = discogsCache || {};
+var discogsCache = typeof discogsCache !== 'undefined' ? discogsCache : {};
 
 // ==========================================
 // CONFIGURATIE - VUL HIER JE GEGEVENS IN
