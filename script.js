@@ -1,3 +1,6 @@
+// Discogs cache wordt via index.html beheerd
+if (typeof discogsCache === 'undefined') { var discogsCache = {}; }
+
 // ==========================================
 // CONFIGURATIE - VUL HIER JE GEGEVENS IN
 // ==========================================
