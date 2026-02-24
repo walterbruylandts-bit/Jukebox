@@ -60,13 +60,13 @@ function maakDePaginaAan(elpees) {
         kaartje.className = 'album-card';
         kaartje.innerHTML = `
             <div class="image-container" style="background:#222; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; border-radius:8px; overflow:hidden;">
-                <img src="${discogsCache[id] ? discogsCache[id].images[0].resource_url : ''}" class="album-cover" id="img-${id}" style="${discogsCache[id] ? 'display:block' : 'display:none'}; width:100%;">
-                <span id="placeholder-${id}" style="${discogsCache[id] ? 'display:none' : 'display:block'}; font-size:40px;">💿</span>
-            </div>
-            <div class="album-info">
-                <h2 style="font-size:1rem; margin:10px 0 5px 0; color:white;">${elpee.Artist}</h2>
-                <p style="color:#888; margin:0; font-size:0.9rem;">${elpee.Title}</p>
-            </div>`;
+    <img src="" class="album-cover" id="img-${id}" style="display:none; width:100%;">
+    <span id="placeholder-${id}" style="display:block; font-size:40px;">💿</span>
+</div>
+<div class="album-info">
+    <h2 style="font-size:1rem; margin:10px 0 5px 0; color:white;">${elpee.Artist}</h2>
+    <p style="color:#888; margin:0; font-size:0.9rem;">${elpee.Title}</p>
+</div>`;
         kaartje.onclick = () => openMuziekPopup(elpee);
         container.appendChild(kaartje);
     });
