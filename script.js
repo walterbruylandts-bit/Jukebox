@@ -1,10 +1,10 @@
 // ==========================================
 // CONFIGURATIE - VUL HIER JE GEGEVENS IN
 // ==========================================
-const navidromeServer = "http://141.144.192.216:4533";
-const user = "test"; // Je Navidrome loginnaam
-const pass = "399450a86f265882ec836c4b9d05370d";         // Je Navidrome Token (zie uitleg onderaan)
-const salt = "jukebox2026";          // De Salt die bij je Token hoort
+var navidromeServer = "http://141.144.192.216:4533";
+var user = "test"; 
+var pass = "123456"; 
+var salt = ""; // Laat dit helemaal leeg tussen de aanhalingstekens
 const DISCOGS_TOKEN = "BMwPAgEDqQEyruCDxrfOKPNpAtkaaIDPMxrqtNYc";
 const CSV_BESTAND = "collectie.csv"; 
 
