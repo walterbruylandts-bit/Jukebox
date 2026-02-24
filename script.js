@@ -9,17 +9,19 @@ const DISCOGS_TOKEN = "BMwPAgEDqQEyruCDxrfOKPNpAtkaaIDPMxrqtNYc";
 const CSV_BESTAND = "collectie.csv"; 
 
 // ==========================================
-// VARIABELEN & STATUS
+// VARIABELEN (Zonder dubbele declaratie!)
 // ==========================================
+// We gebruiken window.discogsCache om zeker te weten dat we de versie uit index.html gebruiken
+window.discogsCache = window.discogsCache || {};
+
 let alleElpees = [];
-let discogsCache = {}; 
 let isPaused = false;
 let laadIndex = 0;
 let favorieten = JSON.parse(localStorage.getItem('vinyl_favs')) || [];
 let filterFavs = false;
 
 // ==========================================
-// 1. COLLECTIE LADEN & PAGINA OPBOUW
+// 1. COLLECTIE LADEN
 // ==========================================
 function laadMijnCollectie() {
     updateStatus("Bezig met laden van collectie...");
