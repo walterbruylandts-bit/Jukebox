@@ -2,9 +2,9 @@
 // CONFIGURATIE - VUL HIER JE GEGEVENS IN
 // ==========================================
 const navidromeServer = "http://141.144.192.216:4533";
-const user = "Walterbruylandts"; // Je Navidrome loginnaam
-const pass = "5db21d96009805908b982998f8047970";         // Je Navidrome Token (zie uitleg onderaan)
-const salt = "muziek2026";          // De Salt die bij je Token hoort
+const user = "jukebox"; // Je Navidrome loginnaam
+const pass = "f1190c12847a988d4083d9435b546764";         // Je Navidrome Token (zie uitleg onderaan)
+const salt = "jukebox";          // De Salt die bij je Token hoort
 const DISCOGS_TOKEN = "BMwPAgEDqQEyruCDxrfOKPNpAtkaaIDPMxrqtNYc";
 const CSV_BESTAND = "collectie.csv"; 
 
