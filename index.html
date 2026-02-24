@@ -2,17 +2,21 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mijn Vinyl Collectie</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
-    <div id="status-bar">Wacht op start...</div>
+    
+    <div id="status-bar">Systeem wordt opgestart...</div>
+
     <div class="controls">
         <input type="text" id="search-input" placeholder="Zoek artiest of album...">
         <button id="pause-btn">Pauzeer laden</button>
         <button id="fav-filter-btn">Toon Favorieten ☆</button>
     </div>
+
     <div id="vinyl-container"></div>
 
     <div id="album-modal" class="modal">
@@ -23,9 +27,11 @@
     </div>
 
     <script>
+        // Dit voorkomt de 'ReferenceError' als discogs_cache.js ontbreekt
         var discogsCache = {};
     </script>
     
     <script src="script.js"></script>
+
 </body>
 </html>
