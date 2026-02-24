@@ -1,6 +1,3 @@
-// Discogs cache wordt via index.html beheerd
-if (typeof discogsCache === 'undefined') { var discogsCache = {}; }
-
 // ==========================================
 // CONFIGURATIE - VUL HIER JE GEGEVENS IN
 // ==========================================
@@ -12,16 +9,16 @@ const DISCOGS_TOKEN = "BMwPAgEDqQEyruCDxrfOKPNpAtkaaIDPMxrqtNYc";
 const CSV_BESTAND = "collectie.csv"; 
 
 // ==========================================
-// VARIABELEN (Zonder dubbele declaratie!)
+// VARIABELEN (Veilige declaratie)
 // ==========================================
-// We gebruiken window.discogsCache om zeker te weten dat we de versie uit index.html gebruiken
-window.discogsCache = window.discogsCache || {};
+// We gebruiken de cache die al in index.html is aangemaakt
+var discogsCache = window.discogsCache || {};
 
-let alleElpees = [];
-let isPaused = false;
-let laadIndex = 0;
-let favorieten = JSON.parse(localStorage.getItem('vinyl_favs')) || [];
-let filterFavs = false;
+var alleElpees = [];
+var isPaused = false;
+var laadIndex = 0;
+var favorieten = JSON.parse(localStorage.getItem('vinyl_favs')) || [];
+var filterFavs = false;
 
 // ==========================================
 // 1. COLLECTIE LADEN
