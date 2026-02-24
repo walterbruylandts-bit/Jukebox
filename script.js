@@ -1,3 +1,4 @@
+if (typeof discogsCache === 'undefined') { var discogsCache = {}; }
 const discogsCache = {};
 
 / ==========================================
@@ -62,14 +63,12 @@ function maakDePaginaAan(elpees) {
         kaartje.className = 'album-card';
         kaartje.innerHTML = `
 <div class="image-container" style="background:#222; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; border-radius:8px; overflow:hidden;">
-    <img src="${serverUrl}/rest/getCoverArt?u=${user}&t=${token}&s=${salt}&v=1.16.1&id=${elpee.id || elpee.ID}" 
-         class="album-cover" 
-         id="img-${id}" 
-         style="display:block; width:100%;"
-         onclick="openModal('${elpee.id || elpee.ID}')"
-         onerror="this.style.display='none'; document.getElementById('placeholder-${id}').style.display='block';">
-    <span id="placeholder-${id}" style="display:none; font-size:40px;">💿</span>
+    <span id="placeholder-${id}" style="display:block; font-size:40px;">💿</span>
 </div>
+<div class="album-info">
+    <h2 style="font-size:1rem; margin:10px 0 5px 0; color:white;">${elpee.Artist || 'Onbekende artiest'}</h2>
+    <p style="color:#888; margin:0; font-size:0.9rem;">${elpee.Title || 'Onbekend album'}</p>
+</div>`;
         kaartje.onclick = () => openMuziekPopup(elpee);
         container.appendChild(kaartje);
     });
